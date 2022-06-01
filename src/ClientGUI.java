@@ -17,9 +17,9 @@ public class ClientGUI extends JFrame implements ActionListener {
     private JButton login;
     // for the chat room
     private JTextArea ta;
+
+    private JButton send;
     // if it is for connection
-    private boolean connected;
-    // the Client object
     private Client client;
     // the default port number
     private int defaultPort;
@@ -54,13 +54,19 @@ public class ClientGUI extends JFrame implements ActionListener {
         ta.setEditable(false);
         add(centerPanel, BorderLayout.CENTER);
 
-        // the 3 buttons
         login = new JButton("Login");
         login.addActionListener(this);
 
+        send = new JButton("Send");
+        send.addActionListener(this);
+        send.setEnabled(false);
+
         JPanel southPanel = new JPanel();
         southPanel.add(login);
+        southPanel.add(send);
         add(southPanel, BorderLayout.SOUTH);
+
+
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 600);
@@ -79,10 +85,10 @@ public class ClientGUI extends JFrame implements ActionListener {
     void connectionFailed() {
         login.setEnabled(true);
         label.setText("Enter your username below");
+        send.setEnabled(false);
         tf.setText("Anonymous");
         // reset port number and host name as a construction time
         tf.removeActionListener(this);
-        connected = false;
     }
 
     /*
@@ -90,11 +96,8 @@ public class ClientGUI extends JFrame implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-
-        // ok it is coming from the JTextField
-        if(connected) {
-            // just have to send the message
-            client.sendMessage(new ChatMessage(tf.getText()));
+        if(o == send) {
+            client.sendMessage(new ChatMessage( tf.getText()));
             tf.setText("");
             return;
         }
@@ -113,10 +116,10 @@ public class ClientGUI extends JFrame implements ActionListener {
                 return;
             tf.setText("");
             label.setText("Enter your message below");
-            connected = true;
 
             // disable login button
             login.setEnabled(false);
+            send.setEnabled(true);
             // enable the 2 buttons
 
             // Action listener for when the user enter a message
